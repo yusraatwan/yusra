@@ -3,8 +3,8 @@ $host='locaLhost';
 $username='root';
 $password='';
 $dbname='web2';
-$connt = mysqli_connect($host,$username,$password,$dbname);
-if(!$connt){
+$connt =  new mysqli($host,$username,$password,$dbname);
+if($connt->connect_error){
 echo"error";
 } else {
 echo"connection done";
@@ -21,7 +21,7 @@ echo"connection done";
 
 
 if (isset($_POST['send'])) {
-    $gender =  $_POST['gender'];
+   // $gender =  $_POST['gender'];
     $email = $_POST['email'];
     $password = $_POST['password'];
     $name = $_POST['name'];
@@ -73,36 +73,39 @@ if (isset($_POST['send'])) {
             header("refresh");
         }
     }
-
-    htmlspecialchars($password);
     htmlspecialchars($name);
+    htmlspecialchars($password);
     htmlspecialchars($email);
-   //$pass =md5($password);
+   $pass =md5($password);
    $hash = password_hash($password, PASSWORD_DEFAULT);
-   $sql="insert into users2(name ,email ,password ,gender) 
-   values(?,?,?,?)";
-   $stmt=mysqli_prepare($connt,$sql);
-  mysqli_stmt_bind_param($connt,"sss","$name","$email","$password");
+   $stmt=$connt->prepare("insert into users2(name ,email ,password) values(?,?,?)");
+   $stmt->bind_param("sss",$name,$email,$password);
+
    $name="yusra";
    $email="yusra@";
    $password="123456";
-   mysqli_stmt_execute($stmt);
-   $name="heba";
-   $email="heba@";
-   $password="123456789";
-   mysqli_stmt_execute($stmt);
-   echo"new record creat succesfully";
-   mysqli_close($stmt);
-   mysqli_close($connt); 
 
-//$insert = "insert into users2(name ,email ,password ,gender) values
-//('$name','$email','$hash','$gender')";
-$result =mysqli_query($connt,$selsct);
-if($result==TRUE){
+   $stmt->execute();
+   $name="hh";
+   $email="hh@";
+   $password="123456789";
+ 
+   $stmt->execute();
+   echo"</br>new record creat succesfully";
+   $stmt->close();
+    $connt->close(); 
+
+/*$insert = "insert into users2(name ,email ,password ,gender) values
+('$name','$email','$hash','$gender')";
+
+if($connt->query($insert)==TRUE){
     echo"<br/>successfully add";
  }  else{
     echo"error:";//.mysqli_error($connt);
-}}
+}
+$connt->close();
+*/
+}
 
 ?>
 
