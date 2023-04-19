@@ -21,7 +21,6 @@ echo"connection done";
 
 
 if (isset($_POST['send'])) {
-   // $gender =  $_POST['gender'];
     $email = $_POST['email'];
     $password = $_POST['password'];
     $name = $_POST['name'];
@@ -73,11 +72,14 @@ if (isset($_POST['send'])) {
             header("refresh");
         }
     }
+    $gender =  $_POST['gender'];
     htmlspecialchars($name);
     htmlspecialchars($password);
     htmlspecialchars($email);
    $pass =md5($password);
    $hash = password_hash($password, PASSWORD_DEFAULT);
+
+  
    $stmt=$connt->prepare("insert into users2(name ,email ,password) values(?,?,?)");
    $stmt->bind_param("sss",$name,$email,$password);
 
@@ -93,18 +95,29 @@ if (isset($_POST['send'])) {
    $stmt->execute();
    echo"</br>new record creat succesfully";
    $stmt->close();
+
+
+
+
+
+   $insert = "insert into users2(name ,email ,password ,gender) values
+   ('$name','$email','$hash','$gender')";
+   
+   $result =mysqli_query($connt,$insert);
+   if($result==TRUE){
+       echo"<br/>successfully add";
+    }  else{
+       echo"error:";//.mysqli_error($connt);
+   }
+
+
     $connt->close(); 
 
-/*$insert = "insert into users2(name ,email ,password ,gender) values
-('$name','$email','$hash','$gender')";
 
-if($connt->query($insert)==TRUE){
-    echo"<br/>successfully add";
- }  else{
-    echo"error:";//.mysqli_error($connt);
-}
-$connt->close();
-*/
+
+
+
+
 }
 
 ?>
